@@ -1,6 +1,6 @@
-module HOF where
+module HOFLists where
 
-import Prelude hiding (filter,takeWhile,dropWhile,span,break,map,concat,concatMap)
+import Prelude hiding (filter,takeWhile,dropWhile,span,break,concat,concatMap)
 import Data.Char (isDigit)
 
 
@@ -90,9 +90,9 @@ qsort (x:xs) = qsort (filter (< x) xs) ++ [x] ++ qsort(filter (>= x) xs)
 --                in qsort l ++ x : qsort r
 
 -- (a -> b)  obschee oboznachenie funkcii
-map :: (a -> b) -> [a] -> [b]
-map _ [] = []
-map f (x:xs) = f x : map f xs
+map1 :: (a -> b) -> [a] -> [b]
+map1 _ [] = []
+map1 f (x:xs) = f x : map1 f xs
 --map (+10) [1,2,3,4]
 
 
@@ -161,39 +161,66 @@ GHCi> perms [1,2,3]
 
 -}
 
+
+-- push number inside each position in list
+
+perms [] = [[]] 
+perms (x:xs) = concatMap (push x) (perms xs)
+
+push a [] = [[a]]
+push a l@(x:xs) = (a:l) : map (x:) (push a xs)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- perms :: [a] -> [[a]]
--- perms = undefined where
---     split [] = [[]]
---     split [x] = [[x]]
---     split (x:xs) = [x] : split xs
+-- perms = foldr (concatMap . swap) [[]]
 
--- split [] = [[]]
--- split [x] = [[x]]
--- split (x:xs) = [x] : split xs
+-- swap :: t -> [t] -> [[t]]
+-- swap a [] = [[a]]
+-- swap a l@(y:ys) = (a:l): map (y:) (swap a ys)
+
+
+
 
 -- perms :: [a] -> [[a]]
--- perms = undefined where
--- move :: [a] -> [a] -> [[a]]
--- move [] [] = [[]]
--- move [x] [] = [[x]]
--- move xs [] = []
--- move xs (y:ys) = ((y:xs) ++ ys) : move (y:xs) ys ++ move (y:xs) ys
+-- perms list = perm [] list
+-- 	where
+-- 		perm _ [] = [[]]
+-- 		perm xs [y] = map (y:) (perms xs)
+-- 		perm xs (y:ys) = (map (y:) (perms (xs ++ ys))) ++ (perm (xs ++ [y]) ys)
 
 
--- -- move :: [a] -> [a] -> [[a]]
--- move [] = [[]]
--- move [x] = [[x]]
--- move (x:xs) | 
-
-
- 
--- swap _ [] [] = [[]]
--- swap _ xs [] = [xs]
--- swap a xs (y:ys) = (xs ++ [y] ++ [a]) : swap a (xs ++ [y]) ys
--- -- swap a xs (y:ys) = (xs ++ [y] ++ [a]) : swap a (xs ++ [y]) ys
-
-swap [] [] = [[]]
-swap [x] [y] = [[x,y], [y,x]]
-swap [] [y] = [[y]]
-swap [x] [] = [[x]]
-swap (x:xs) (y: ys) = undefined
+{-
+perms :: [a] -> [[a]]
+perms []     = [[]]
+perms (x:xs) = concatMap (insert x) (perms xs) where
+    insert :: a -> [a] -> [[a]]
+    insert x []     = [[x]]
+    insert x (y:ys) = (x:y:ys) : map (y:) (insert x ys)
+-}
